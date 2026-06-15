@@ -100,8 +100,9 @@ input[readonly]{background:#f6f6f6;color:#555}
 .btn-close-slip:active{background:#e0e0e0}
 @media print{
   body>*{display:none!important}
-  #slip-overlay{position:static!important;background:none!important;padding:0!important}
-  #slip-box{width:100%!important;max-width:100%!important;border-radius:0!important}
+  #slip-overlay{display:block!important;position:static!important;background:none!important;padding:0!important}
+  #slip-box{display:block!important;width:100%!important;max-width:100%!important;border-radius:0!important;box-shadow:none!important}
+  #slip-content{display:block!important}
   .slip-actions{display:none!important}
   #btn-capture-wrap{display:none!important}
 }
