@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>รับซื้อยางพารา</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f4f2;min-height:100vh;padding:0 0 40px}
+.topbar{background:#1D9E75;color:white;padding:16px 18px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:10}
+.topbar-title{font-size:17px;font-weight:600}
+.topbar-sub{font-size:12px;opacity:.8;margin-top:1px}
+.tabs{display:flex;background:#166f53;padding:0 14px}
+.tab{flex:1;text-align:center;padding:10px 0;font-size:14px;font-weight:600;color:rgba(255,255,255,.6);cursor:pointer;border-bottom:3px solid transparent}
+.tab.active{color:white;border-bottom:3px solid white}
+.tab-page{display:none}
+.tab-page.active{display:block}
+.card{background:white;border-radius:16px;padding:18px;margin:14px 14px 0}
+.card-title{font-size:13px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px}
+.field{margin-bottom:14px}
+.field:last-child{margin-bottom:0}
+label{display:block;font-size:13px;color:#666;margin-bottom:5px;font-weight:500}
+input[type=text],input[type=number],input[type=date]{width:100%;height:48px;border:1.5px solid #e0e0e0;border-radius:10px;padding:0 14px;font-size:16px;color:#111;background:white;outline:none;-webkit-appearance:none;appearance:none}
+input[type=date]{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+input:focus{border-color:#1D9E75;box-shadow:0 0 0 3px rgba(29,158,117,.12)}
+input[readonly]{background:#f6f6f6;color:#555}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-main{width:100%;height:52px;background:#1D9E75;color:white;border:none;border-radius:12px;font-size:17px;font-weight:600;cursor:pointer;margin-top:4px}
+.btn-main:active{background:#0F6E56;transform:scale(.98)}
+.btn-main.disabled{background:#b0d9c8;pointer-events:none}
+.btn-ghost{height:38px;border:1.5px solid #e0e0e0;background:white;border-radius:10px;font-size:14px;color:#555;padding:0 16px;cursor:pointer}
+.btn-ghost:active{background:#f0f0f0}
+.btn-print{width:100%;height:52px;background:white;color:#1D9E75;border:2px solid #1D9E75;border-radius:12px;font-size:17px;font-weight:600;cursor:pointer;margin-top:10px}
+.btn-print:active{background:#f0faf5}
+.session-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.session-info .sname{font-size:16px;font-weight:600;color:#111}
+.session-info .meta{font-size:13px;color:#888;margin-top:3px;line-height:1.6}
+.date-badge{display:inline-flex;align-items:center;gap:5px;background:#e8f7f1;color:#0F6E56;border-radius:8px;padding:4px 10px;font-size:13px;font-weight:600;margin-bottom:12px}
+.net-box{background:#f0faf5;border-radius:10px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;border:1px solid #c8edd9}
+.net-label{font-size:13px;color:#0F6E56;font-weight:500}
+.net-val{font-size:20px;font-weight:700;color:#1D9E75}
+.summary-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:0}
+.metric{background:#f0faf5;border-radius:10px;padding:10px}
+.metric .ml{font-size:11px;color:#888;margin-bottom:3px;line-height:1.3}
+.metric .mv{font-size:16px;font-weight:700;color:#111}
+.metric .mv.green{color:#1D9E75}
+.entries{margin-top:14px}
+.entry-item{border-bottom:1px solid #f0f0f0;padding:12px 0;display:flex;justify-content:space-between;align-items:center}
+.entry-item:last-child{border-bottom:none}
+.entry-left .round{font-size:12px;color:#aaa;margin-bottom:2px}
+.entry-left .weights{font-size:14px;color:#333}
+.entry-left .weights span{color:#1D9E75;font-weight:600}
+.entry-right{text-align:right}
+.entry-right .amount{font-size:15px;font-weight:700;color:#1D9E75}
+.entry-right .net{font-size:12px;color:#aaa;margin-top:1px}
+.btn-del{background:none;border:none;color:#ccc;font-size:22px;padding:4px 8px;cursor:pointer;line-height:1}
+.btn-del:active{color:#e24b4a}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:#222;color:white;padding:10px 22px;border-radius:30px;font-size:14px;opacity:0;transition:all .3s;z-index:300;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.error{background:#e24b4a}
+.hidden{display:none}
+.divider{height:1px;background:#f0f0f0;margin:14px 0}
+.round-badge{display:inline-block;background:#e8f7f1;color:#0F6E56;border-radius:20px;font-size:12px;font-weight:600;padding:2px 10px;margin-bottom:12px}
+.setup-note{background:#fff9e6;border-radius:10px;padding:14px;border:1px solid #ffe58a;margin-bottom:14px}
+.setup-note p{font-size:13px;color:#7a6000;line-height:1.6}
+.gs-url-note{font-size:12px;color:#aaa;margin-top:5px}
+/* history */
+.hist-day{margin:14px 14px 0}
+.hist-day-label{font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;padding:0 4px}
+.hist-item{background:white;border-radius:14px;padding:14px 16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.hist-item:active{background:#f5f5f5}
+.hist-left .hname{font-size:15px;font-weight:600;color:#111}
+.hist-left .hmeta{font-size:12px;color:#aaa;margin-top:2px}
+.hist-right .hamount{font-size:15px;font-weight:700;color:#1D9E75;text-align:right}
+.hist-right .hnet{font-size:12px;color:#aaa;text-align:right;margin-top:2px}
+.hist-empty{text-align:center;padding:48px 0;color:#bbb;font-size:15px}
+/* SLIP */
+#slip-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;overflow-y:auto;padding:20px 0}
+#slip-box{background:white;width:90%;max-width:400px;margin:0 auto;border-radius:16px;overflow:hidden}
+#slip-content{padding:24px 20px}
+.slip-shop{font-size:15px;font-weight:700;color:#111;text-align:center;margin-bottom:2px}
+.slip-title{font-size:13px;color:#888;text-align:center;margin-bottom:16px}
+.slip-meta{display:flex;justify-content:space-between;font-size:13px;color:#444;margin-bottom:4px}
+.slip-divider{border:none;border-top:1px dashed #ccc;margin:12px 0}
+.slip-table{width:100%;border-collapse:collapse;font-size:13px}
+.slip-table th{text-align:center;padding:5px 4px;color:#888;font-weight:600;font-size:12px;border-bottom:1px solid #eee}
+.slip-table td{text-align:center;padding:6px 4px;color:#111;border-bottom:1px solid #f5f5f5}
+.slip-table td:first-child{text-align:left}
+.slip-table td:last-child{text-align:right;font-weight:600}
+.slip-total-box{background:#f0faf5;border-radius:10px;padding:12px 14px;margin-top:12px}
+.slip-total-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:#555;margin-bottom:4px}
+.slip-total-row:last-child{margin-bottom:0;font-size:16px;font-weight:700;color:#111}
+.slip-total-row .big{font-size:20px;color:#1D9E75}
+.slip-footer{text-align:center;font-size:12px;color:#aaa;margin-top:16px}
+.slip-actions{display:flex;gap:10px;padding:0 20px 20px}
+.slip-actions button{flex:1;height:48px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;border:none}
+.btn-do-print{background:#1D9E75;color:white}
+.btn-do-print:active{background:#0F6E56}
+.btn-close-slip{background:#f0f0f0;color:#555}
+.btn-close-slip:active{background:#e0e0e0}
+@media print{
+  body>*{display:none!important}
+  #slip-overlay{position:static!important;background:none!important;padding:0!important}
+  #slip-box{width:100%!important;max-width:100%!important;border-radius:0!important}
+  .slip-actions{display:none!important}
+  #btn-capture-wrap{display:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+    <path d="M12 3C9 3 6 5 6 8c0 2 1 3.5 2.5 4.5L7 21h10l-1.5-8.5C17 11.5 18 10 18 8c0-3-3-5-6-5z" stroke="white" stroke-width="1.8" fill="rgba(255,255,255,.2)" stroke-linejoin="round"/>
+    <path d="M9 21h6" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+  </svg>
+  <div>
+    <div class="topbar-title">ลานขายยางพาราน้ำตก</div>
+    <div class="topbar-sub" id="topbar-date"></div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('main')">บันทึก</div>
+  <div class="tab" onclick="switchTab('history')">ประวัติ</div>
+</div>
+
+<!-- ===== TAB: MAIN ===== -->
+<div class="tab-page active" id="tab-main">
+
+<div class="card hidden" id="card-config">
+  <div class="card-title">ตั้งค่า</div>
+  <div class="setup-note"><p>วาง URL ของ Google Apps Script ที่นี่<br>ดูคู่มือ_AppsScript.txt สำหรับวิธีสร้าง</p></div>
+  <div class="field">
+    <label>Apps Script Web App URL</label>
+    <input type="text" id="inp-url" placeholder="https://script.google.com/macros/s/.../exec">
+    <div class="gs-url-note">กรอกครั้งเดียว ระบบจะจำไว้</div>
+  </div>
+  <div class="field">
+    <label>ชื่อร้าน / สวนยาง</label>
+    <input type="text" id="inp-shop" value="ลานขายยางพาราน้ำตก">
+  </div>
+  <button class="btn-main" onclick="saveConfig()">บันทึกและเริ่มใช้งาน</button>
+</div>
+
+<div class="card hidden" id="card-setup">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <div class="card-title" style="margin-bottom:0">ข้อมูลลูกค้า</div>
+    <button class="btn-ghost" onclick="openConfig()" style="font-size:13px">⚙ ตั้งค่า</button>
+  </div>
+  <div class="field">
+    <label>วันที่รับซื้อ</label>
+    <input type="date" id="inp-date">
+  </div>
+  <div class="field">
+    <label>ชื่อลูกค้า</label>
+    <input type="text" id="inp-name" placeholder="กรอกชื่อลูกค้า">
+  </div>
+  <div class="row2">
+    <div class="field">
+      <label>ราคา (บาท/กก.)</label>
+      <input type="number" id="inp-price" placeholder="0.00" inputmode="decimal">
+    </div>
+    <div class="field">
+      <label>หักน้ำหนักรถ (กก.)</label>
+      <input type="number" id="inp-tare" placeholder="0" inputmode="decimal">
+    </div>
+  </div>
+  <button class="btn-main" onclick="startSession()">เริ่มบันทึกการชั่ง →</button>
+</div>
+
+<div class="card hidden" id="card-session">
+  <div class="session-header">
+    <div class="session-info">
+      <div class="sname" id="disp-name"></div>
+      <div class="meta" id="disp-meta"></div>
+    </div>
+    <button class="btn-ghost" onclick="endSession()">เปลี่ยนลูกค้า</button>
+  </div>
+  <div class="date-badge">📅 <span id="disp-date-session"></span></div>
+  <div class="divider"></div>
+  <div class="round-badge">ครั้งที่ <span id="next-round">1</span></div>
+  <div class="field">
+    <label>น้ำหนักที่ชั่ง (กก.)</label>
+    <input type="number" id="inp-gross" placeholder="0.00" inputmode="decimal" oninput="updateNet()">
+  </div>
+  <div class="net-box">
+    <span class="net-label">น้ำหนักสุทธิ</span>
+    <span class="net-val" id="disp-net">— กก.</span>
+  </div>
+  <button class="btn-main" onclick="addWeighing()">+ เพิ่มการชั่งครั้งนี้</button>
+</div>
+
+<div class="card hidden" id="card-summary">
+  <div class="card-title">สรุปยอด — <span id="sum-date" style="color:#1D9E75"></span></div>
+  <div class="summary-row">
+    <div class="metric"><div class="ml">จำนวนครั้ง</div><div class="mv" id="sum-count">0</div></div>
+    <div class="metric"><div class="ml">น้ำหนักสุทธิ (กก.)</div><div class="mv" id="sum-net">0</div></div>
+    <div class="metric"><div class="ml">ยอดรวม (บาท)</div><div class="mv green" id="sum-total">฿0</div></div>
+  </div>
+  <div class="entries" id="entries-list">
+    <div style="text-align:center;padding:24px 0;color:#bbb;font-size:14px">ยังไม่มีรายการ</div>
+  </div>
+  <div class="divider"></div>
+  <button class="btn-main disabled" id="btn-save" onclick="saveToSheets()">ส่งข้อมูลไป Google Sheets</button>
+  <button class="btn-print disabled" id="btn-print" onclick="openSlip(currentSlipData())">🖨 พิมพ์ใบสำคัญ</button>
+</div>
+
+</div><!-- end tab-main -->
+
+<!-- ===== TAB: HISTORY ===== -->
+<div class="tab-page" id="tab-history">
+  <div id="hist-wrap"></div>
+</div>
+
+<!-- SLIP OVERLAY -->
+<div id="slip-overlay" class="hidden">
+  <div id="slip-box">
+    <div id="slip-content">
+      <div class="slip-shop" id="slip-shop-name"></div>
+      <div class="slip-title">ใบสำคัญรับซื้อยางพารา</div>
+      <div class="slip-meta"><span>วันที่</span><span id="sl-date"></span></div>
+      <div class="slip-meta"><span>ลูกค้า</span><span id="sl-customer" style="font-weight:600"></span></div>
+      <div class="slip-meta"><span>ราคารับซื้อ</span><span id="sl-price"></span></div>
+      <div class="slip-meta"><span>หักน้ำหนักรถ</span><span id="sl-tare"></span></div>
+      <hr class="slip-divider">
+      <table class="slip-table">
+        <thead><tr><th>ครั้ง</th><th>ชั่ง (กก.)</th><th>สุทธิ (กก.)</th><th>ยอด (บาท)</th></tr></thead>
+        <tbody id="sl-rows"></tbody>
+      </table>
+      <div class="slip-total-box">
+        <div class="slip-total-row"><span>น้ำหนักสุทธิรวม</span><span id="sl-total-net"></span></div>
+        <div class="slip-total-row"><span>ยอดรวมทั้งหมด</span><span class="big" id="sl-total-amt"></span></div>
+      </div>
+      <div class="slip-footer">ขอบคุณที่ใช้บริการ</div>
+    </div>
+    <div class="slip-actions">
+      <button class="btn-close-slip" onclick="closeSlip()">ปิด</button>
+      <button class="btn-do-print" onclick="window.print()">🖨 พิมพ์ / PDF</button>
+    </div>
+    <div id="btn-capture-wrap" style="padding:0 20px 20px">
+      <button id="btn-capture" onclick="captureSlip()" style="width:100%;height:48px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;border:none;background:#f0faf5;color:#0F6E56">📸 บันทึกเป็นรูป (ส่ง Line)</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+const KEY_URL='rubber_gs_url', KEY_SHOP='rubber_shop_name', KEY_HIST='rubber_history';
+let session=null, entries=[], uid=0;
+
+function fmt(n,d=2){return Number(n).toLocaleString('th-TH',{minimumFractionDigits:d,maximumFractionDigits:d})}
+function toThaiDate(s){
+  if(!s)return'';
+  const [y,m,d]=s.split('-');
+  const mo=['','ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  return `${parseInt(d)} ${mo[parseInt(m)]} ${parseInt(y)+543}`;
+}
+function todayVal(){return new Date().toISOString().slice(0,10)}
+function yesterdayVal(){const d=new Date();d.setDate(d.getDate()-1);return d.toISOString().slice(0,10)}
+function showToast(msg,err=false){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast show'+(err?' error':'');
+  setTimeout(()=>{t.className='toast'},2800);
+}
+function show(id){document.getElementById(id).classList.remove('hidden')}
+function hide(id){document.getElementById(id).classList.add('hidden')}
+
+function switchTab(tab){
+  document.querySelectorAll('.tab').forEach((t,i)=>{
+    t.classList.toggle('active',i===(tab==='main'?0:1));
+  });
+  document.getElementById('tab-main').classList.toggle('active',tab==='main');
+  document.getElementById('tab-history').classList.toggle('active',tab==='history');
+  if(tab==='history') renderHistory();
+}
+
+/* ---- HISTORY ---- */
+function loadHistory(){
+  try{return JSON.parse(localStorage.getItem(KEY_HIST)||'[]');}catch{return[];}
+}
+function saveHistory(hist){localStorage.setItem(KEY_HIST,JSON.stringify(hist));}
+function pruneHistory(){
+  const today=todayVal(), yest=yesterdayVal();
+  const hist=loadHistory().filter(r=>r.dateVal===today||r.dateVal===yest);
+  saveHistory(hist);
+  return hist;
+}
+function addToHistory(record){
+  const hist=pruneHistory();
+  hist.push(record);
+  saveHistory(hist);
+}
+
+function renderHistory(){
+  const hist=pruneHistory();
+  const wrap=document.getElementById('hist-wrap');
+  if(!hist.length){
+    wrap.innerHTML='<div class="hist-empty">📭<br><br>ยังไม่มีประวัติ<br><span style="font-size:13px">จะแสดงรายการวันนี้และเมื่อวาน</span></div>';
+    return;
+  }
+  const today=todayVal(), yest=yesterdayVal();
+  const groups={};
+  hist.forEach(r=>{
+    if(!groups[r.dateVal])groups[r.dateVal]=[];
+    groups[r.dateVal].push(r);
+  });
+  let html='';
+  [today,yest].forEach(d=>{
+    if(!groups[d])return;
+    const label=d===today?'วันนี้ — '+toThaiDate(d):'เมื่อวาน — '+toThaiDate(d);
+    html+=`<div class="hist-day"><div class="hist-day-label">${label}</div>`;
+    groups[d].forEach((r,i)=>{
+      const tNet=r.weighings.reduce((s,w)=>s+w.net,0);
+      const tAmt=r.weighings.reduce((s,w)=>s+w.amount,0);
+      html+=`<div class="hist-item" onclick='openSlip(${JSON.stringify(r)})'>
+        <div class="hist-left">
+          <div class="hname">${r.name}</div>
+          <div class="hmeta">${r.weighings.length} ครั้ง · ราคา ${fmt(r.price)} บาท/กก.</div>
+        </div>
+        <div class="hist-right">
+          <div class="hamount">฿${fmt(tAmt)}</div>
+          <div class="hnet">${fmt(tNet)} กก.</div>
+        </div>
+      </div>`;
+    });
+    html+='</div>';
+  });
+  wrap.innerHTML=html;
+}
+
+/* ---- CONFIG ---- */
+window.onload=function(){
+  const today=todayVal();
+  document.getElementById('inp-date').value=today;
+  document.getElementById('topbar-date').textContent=toThaiDate(today);
+  document.getElementById('inp-date').addEventListener('change',function(){
+    document.getElementById('topbar-date').textContent=toThaiDate(this.value);
+  });
+  const savedUrl=localStorage.getItem(KEY_URL);
+  const savedShop=localStorage.getItem(KEY_SHOP);
+  if(savedUrl){
+    document.getElementById('inp-url').value=savedUrl;
+    document.getElementById('inp-shop').value=savedShop||'ลานขายยางพาราน้ำตก';
+    hide('card-config'); show('card-setup');
+  } else {
+    show('card-config');
+  }
+};
+
+function saveConfig(){
+  const url=document.getElementById('inp-url').value.trim();
+  const shop=document.getElementById('inp-shop').value.trim();
+  if(!url.startsWith('https://script.google.com')){showToast('URL ไม่ถูกต้อง',true);return;}
+  localStorage.setItem(KEY_URL,url);
+  localStorage.setItem(KEY_SHOP,shop||'ลานขายยางพาราน้ำตก');
+  hide('card-config'); show('card-setup');
+  showToast('บันทึกการตั้งค่าเรียบร้อย');
+}
+function openConfig(){
+  document.getElementById('inp-url').value=localStorage.getItem(KEY_URL)||'';
+  document.getElementById('inp-shop').value=localStorage.getItem(KEY_SHOP)||'';
+  hide('card-setup');hide('card-session');hide('card-summary');
+  show('card-config');
+}
+
+/* ---- SESSION ---- */
+function startSession(){
+  const dateVal=document.getElementById('inp-date').value;
+  const name=document.getElementById('inp-name').value.trim();
+  const price=parseFloat(document.getElementById('inp-price').value);
+  const tare=parseFloat(document.getElementById('inp-tare').value)||0;
+  if(!dateVal){showToast('กรุณาเลือกวันที่',true);return;}
+  if(!name){showToast('กรุณากรอกชื่อลูกค้า',true);return;}
+  if(isNaN(price)||price<=0){showToast('กรุณากรอกราคายาง',true);return;}
+  session={name,price,tare,dateVal,dateDisplay:toThaiDate(dateVal)};
+  entries=[];
+  document.getElementById('disp-name').textContent=name;
+  document.getElementById('disp-meta').innerHTML='ราคา <strong>'+fmt(price)+'</strong> บาท/กก. &nbsp;|&nbsp; หักรถ <strong>'+fmt(tare)+'</strong> กก.';
+  document.getElementById('disp-date-session').textContent=toThaiDate(dateVal);
+  document.getElementById('sum-date').textContent=toThaiDate(dateVal);
+  hide('card-setup');show('card-session');show('card-summary');
+  renderEntries();
+  document.getElementById('inp-gross').focus();
+}
+function updateNet(){
+  const g=parseFloat(document.getElementById('inp-gross').value)||0;
+  const net=Math.max(0,g-(session?session.tare:0));
+  document.getElementById('disp-net').textContent=g>0?fmt(net)+' กก.':'— กก.';
+}
+function addWeighing(){
+  const g=parseFloat(document.getElementById('inp-gross').value);
+  if(!g||g<=0){showToast('กรุณากรอกน้ำหนัก',true);return;}
+  const net=Math.max(0,g-session.tare);
+  uid++;
+  entries.push({id:uid,gross:g,tare:session.tare,net,price:session.price,amount:net*session.price});
+  document.getElementById('inp-gross').value='';
+  document.getElementById('disp-net').textContent='— กก.';
+  document.getElementById('inp-gross').focus();
+  renderEntries();
+  showToast('เพิ่มการชั่งครั้งที่ '+entries.length+' แล้ว');
+}
+function deleteEntry(id){entries=entries.filter(e=>e.id!==id);renderEntries();}
+function renderEntries(){
+  document.getElementById('next-round').textContent=entries.length+1;
+  const tNet=entries.reduce((s,e)=>s+e.net,0);
+  const tAmt=entries.reduce((s,e)=>s+e.amount,0);
+  document.getElementById('sum-count').textContent=entries.length;
+  document.getElementById('sum-net').textContent=fmt(tNet);
+  document.getElementById('sum-total').textContent='฿'+fmt(tAmt);
+  const has=entries.length>0;
+  document.getElementById('btn-save').className=has?'btn-main':'btn-main disabled';
+  document.getElementById('btn-print').className=has?'btn-print':'btn-print disabled';
+  const list=document.getElementById('entries-list');
+  if(!has){list.innerHTML='<div style="text-align:center;padding:24px 0;color:#bbb;font-size:14px">ยังไม่มีรายการ</div>';return;}
+  list.innerHTML=entries.map((e,i)=>`
+    <div class="entry-item">
+      <div class="entry-left">
+        <div class="round">ครั้งที่ ${i+1}</div>
+        <div class="weights">ชั่ง ${fmt(e.gross)} − รถ ${fmt(e.tare)} = <span>${fmt(e.net)} กก.</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="entry-right">
+          <div class="amount">฿${fmt(e.amount)}</div>
+          <div class="net">${fmt(e.net)} กก.</div>
+        </div>
+        <button class="btn-del" onclick="deleteEntry(${e.id})">×</button>
+      </div>
+    </div>`).join('');
+}
+function currentSlipData(){
+  if(!session||!entries.length)return null;
+  return {
+    name:session.name, price:session.price, tare:session.tare,
+    dateVal:session.dateVal, dateDisplay:session.dateDisplay,
+    weighings:entries.map((e,i)=>({round:i+1,gross:e.gross,tare:e.tare,net:e.net,amount:e.amount}))
+  };
+}
+function endSession(){
+  if(entries.length>0&&!confirm('เปลี่ยนลูกค้าจะล้างรายการปัจจุบัน ดำเนินการต่อหรือไม่?'))return;
+  entries=[];session=null;uid=0;
+  document.getElementById('inp-name').value='';
+  document.getElementById('inp-price').value='';
+  document.getElementById('inp-gross').value='';
+  hide('card-session');hide('card-summary');show('card-setup');
+  renderEntries();
+}
+
+/* ---- SLIP ---- */
+function openSlip(data){
+  if(!data)return;
+  const shop=localStorage.getItem(KEY_SHOP)||'';
+  const tNet=data.weighings.reduce((s,w)=>s+w.net,0);
+  const tAmt=data.weighings.reduce((s,w)=>s+w.amount,0);
+  document.getElementById('slip-shop-name').textContent=shop;
+  document.getElementById('slip-shop-name').style.display=shop?'block':'none';
+  document.getElementById('sl-date').textContent=data.dateDisplay||toThaiDate(data.dateVal);
+  document.getElementById('sl-customer').textContent=data.name;
+  document.getElementById('sl-price').textContent=fmt(data.price)+' บาท/กก.';
+  document.getElementById('sl-tare').textContent=fmt(data.tare)+' กก.';
+  document.getElementById('sl-rows').innerHTML=data.weighings.map(w=>`
+    <tr><td>${w.round}</td><td>${fmt(w.gross)}</td><td>${fmt(w.net)}</td><td>${fmt(w.amount)}</td></tr>`).join('');
+  document.getElementById('sl-total-net').textContent=fmt(tNet)+' กก.';
+  document.getElementById('sl-total-amt').textContent='฿'+fmt(tAmt);
+  show('slip-overlay');
+}
+function closeSlip(){hide('slip-overlay');}
+
+/* ---- SAVE TO SHEETS + HISTORY ---- */
+function saveToSheets(){
+  if(!entries.length)return;
+  const url=localStorage.getItem(KEY_URL);
+  if(!url){showToast('ยังไม่ได้ตั้งค่า URL',true);return;}
+  const btn=document.getElementById('btn-save');
+  btn.textContent='กำลังส่งข้อมูล...';btn.className='btn-main disabled';
+  const tNet=entries.reduce((s,e)=>s+e.net,0);
+  const tAmt=entries.reduce((s,e)=>s+e.amount,0);
+  const record=currentSlipData();
+  fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      date:session.dateVal,date_thai:session.dateDisplay,
+      customer:session.name,price_per_kg:session.price,tare_weight:session.tare,
+      weighings:entries.map((e,i)=>({round:i+1,gross:e.gross,tare:e.tare,net:e.net,amount:e.amount})),
+      total_net:tNet,total_amount:tAmt
+    })
+  }).then(()=>{
+    addToHistory(record);
+    showToast('ส่งข้อมูลสำเร็จ ✓');
+    btn.textContent='ส่งข้อมูลไป Google Sheets';btn.className='btn-main';
+    endSession();
+  }).catch(()=>{
+    showToast('ส่งไม่สำเร็จ ลองใหม่อีกครั้ง',true);
+    btn.textContent='ส่งข้อมูลไป Google Sheets';btn.className='btn-main';
+  });
+}
+
+/* ---- CAPTURE ---- */
+function captureSlip(){
+  const btn=document.getElementById('btn-capture');
+  btn.textContent='⏳ กำลังสร้างรูป...';btn.style.pointerEvents='none';
+  html2canvas(document.getElementById('slip-content'),{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false}).then(canvas=>{
+    const name=document.getElementById('sl-customer').textContent||'ลูกค้า';
+    const link=document.createElement('a');
+    link.download='ใบสำคัญ_'+name+'_'+new Date().toISOString().slice(0,10)+'.png';
+    link.href=canvas.toDataURL('image/png');link.click();
+    btn.textContent='📸 บันทึกเป็นรูป (ส่ง Line)';btn.style.pointerEvents='';
+  }).catch(()=>{
+    btn.textContent='📸 บันทึกเป็นรูป (ส่ง Line)';btn.style.pointerEvents='';
+    showToast('ไม่สามารถบันทึกรูปได้',true);
+  });
+}
+</script>
+</body>
+</html>
