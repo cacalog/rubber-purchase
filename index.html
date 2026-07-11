@@ -85,15 +85,16 @@ input[readonly]{background:#f6f6f6;color:#555}
 #slip-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;overflow-y:auto;padding:20px 0}
 #slip-box{background:white;width:90%;max-width:400px;margin:0 auto;border-radius:16px;overflow:hidden}
 #slip-content{padding:24px 20px}
-.slip-shop{font-size:15px;font-weight:700;color:#111;text-align:center;margin-bottom:2px}
+.slip-shop{font-size:15px;font-weight:700;color:#111;text-align:center;margin-bottom:2px;word-break:break-word}
 .slip-title{font-size:13px;color:#888;text-align:center;margin-bottom:16px}
-.slip-meta{display:flex;justify-content:space-between;font-size:13px;color:#444;margin-bottom:4px}
+.slip-meta{display:flex;justify-content:space-between;font-size:13px;color:#444;margin-bottom:4px;gap:4px}
 .slip-divider{border:none;border-top:1px dashed #ccc;margin:12px 0}
 .slip-table{width:100%;border-collapse:collapse;font-size:13px}
 .slip-table th{text-align:center;padding:5px 4px;color:#888;font-weight:600;font-size:12px;border-bottom:1px solid #eee}
 .slip-table td{text-align:center;padding:6px 4px;color:#111;border-bottom:1px solid #f5f5f5}
 .slip-table td:first-child{text-align:left}
 .slip-table td:last-child{text-align:right;font-weight:600}
+.slip-table .right{text-align:right}
 .slip-total-box{background:#f0faf5;border-radius:10px;padding:12px 14px;margin-top:12px}
 .slip-total-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:#555;margin-bottom:4px}
 .slip-total-row:last-child{margin-bottom:0;font-size:16px;font-weight:700;color:#111}
@@ -115,9 +116,14 @@ input[readonly]{background:#f6f6f6;color:#555}
   .slip-title{font-size:9pt!important;margin-bottom:3mm!important}
   .slip-meta{font-size:8pt!important;margin-bottom:1mm!important}
   .slip-divider{margin:2mm 0!important}
-  .slip-table{font-size:8pt!important;width:100%!important}
-  .slip-table th{font-size:7pt!important;padding:1mm!important}
-  .slip-table td{font-size:8pt!important;padding:1mm!important}
+  .slip-table{font-size:7.5pt!important;width:100%!important;table-layout:fixed!important}
+  .slip-table th{font-size:6.5pt!important;padding:0.5mm 0.5mm!important;word-break:break-all!important}
+  .slip-table td{font-size:7.5pt!important;padding:0.8mm 0.5mm!important}
+  .slip-table th:first-child,.slip-table td:first-child{width:6mm!important}
+  .slip-table th:nth-child(2),.slip-table td:nth-child(2){width:13mm!important}
+  .slip-table th:nth-child(3),.slip-table td:nth-child(3){width:13mm!important}
+  .slip-table th:last-child,.slip-table td:last-child{width:17mm!important}
+  .right{text-align:right!important}
   .slip-total-box{padding:2mm!important;margin-top:2mm!important;border-radius:0!important}
   .slip-total-row{font-size:8pt!important;margin-bottom:1mm!important}
   .slip-total-row:last-child{font-size:10pt!important}
@@ -246,7 +252,7 @@ input[readonly]{background:#f6f6f6;color:#555}
       <div class="slip-meta"><span>หักน้ำหนักรถ</span><span id="sl-tare"></span></div>
       <hr class="slip-divider">
       <table class="slip-table">
-        <thead><tr><th>ครั้ง</th><th>ชั่ง (กก.)</th><th>สุทธิ (กก.)</th><th>ยอด (บาท)</th></tr></thead>
+        <thead><tr><th style="text-align:left">ครั้ง</th><th class="right">ชั่ง</th><th class="right">สุทธิ</th><th class="right">ยอด(บาท)</th></tr></thead>
         <tbody id="sl-rows"></tbody>
       </table>
       <div class="slip-total-box">
@@ -482,7 +488,12 @@ function openSlip(data){
   document.getElementById('sl-price').textContent=fmt(data.price)+' บาท/กก.';
   document.getElementById('sl-tare').textContent=fmt(data.tare)+' กก.';
   document.getElementById('sl-rows').innerHTML=data.weighings.map(w=>`
-    <tr><td>${w.round}</td><td>${fmt(w.gross)}</td><td>${fmt(w.net)}</td><td>${fmt(w.amount)}</td></tr>`).join('');
+    <tr>
+      <td style="text-align:left">${w.round}</td>
+      <td class="right">${fmt(w.gross)}</td>
+      <td class="right">${fmt(w.net)}</td>
+      <td class="right" style="font-weight:700">${fmt(w.amount)}</td>
+    </tr>`).join('');
   document.getElementById('sl-total-net').textContent=fmt(tNet)+' กก.';
   document.getElementById('sl-total-amt').textContent='฿'+fmt(tAmt);
   show('slip-overlay');
