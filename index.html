@@ -87,7 +87,7 @@ input[readonly]{background:#f6f6f6;color:#555}
 #slip-content{padding:24px 20px}
 .slip-shop{font-size:15px;font-weight:700;color:#111;text-align:center;margin-bottom:2px;word-break:break-word}
 .slip-title{font-size:13px;color:#888;text-align:center;margin-bottom:16px}
-.slip-meta{display:flex;justify-content:space-between;font-size:13px;color:#111;margin-bottom:4px;gap:4px}
+.slip-meta{display:flex;justify-content:space-between;font-size:13px;color:#111;margin-bottom:4px;gap:8px;flex-wrap:wrap}
 .slip-divider{border:none;border-top:1px dashed #ccc;margin:12px 0}
 .slip-table{width:100%;border-collapse:collapse;font-size:13px}
 .slip-table th{text-align:center;padding:5px 4px;color:#888;font-weight:600;font-size:12px;border-bottom:1px solid #eee}
@@ -111,27 +111,32 @@ input[readonly]{background:#f6f6f6;color:#555}
   html{zoom:1!important}
   body>*{display:none!important}
   #slip-overlay{display:block!important;position:static!important;background:none!important;padding:0!important}
-  #slip-box{display:block!important;width:54mm!important;max-width:54mm!important;border-radius:0!important;box-shadow:none!important;margin:0!important}
-  #slip-content{display:block!important;padding:2mm!important}
+  #slip-box{display:block!important;width:54mm!important;max-width:54mm!important;border-radius:0!important;box-shadow:none!important;margin:0!important;overflow:visible!important}
+  #slip-content{display:block!important;padding:1.5mm!important}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
   body{zoom:100%!important}
-  .slip-shop{font-size:10pt!important;margin-bottom:1mm!important;color:#000!important;font-weight:700!important}
-  .slip-title{font-size:9pt!important;margin-bottom:3mm!important}
-  .slip-meta{font-size:8pt!important;margin-bottom:1mm!important;color:#000!important}
+  .slip-shop{font-size:8pt!important;margin-bottom:1mm!important;color:#000!important;font-weight:700!important}
+  .slip-title{font-size:7pt!important;margin-bottom:2mm!important}
+  .slip-meta{font-size:6.5pt!important;margin-bottom:0.8mm!important;color:#000!important}
   .slip-divider{margin:2mm 0!important}
-  .slip-table{font-size:7.5pt!important;width:100%!important;table-layout:fixed!important}
+  .slip-table{font-size:6.5pt!important;width:100%!important;table-layout:fixed!important}
+  .slip-table th{font-size:6pt!important;padding:0.3mm 0.3mm!important;color:#000!important}
   .slip-table th{font-size:6.5pt!important;padding:0.5mm 0.5mm!important;word-break:break-all!important}
-  .slip-table td{font-size:7.5pt!important;padding:0.8mm 0.5mm!important}
-  .slip-table th:first-child,.slip-table td:first-child{width:6mm!important}
-  .slip-table th:nth-child(2),.slip-table td:nth-child(2){width:13mm!important}
-  .slip-table th:nth-child(3),.slip-table td:nth-child(3){width:13mm!important}
-  .slip-table th:last-child,.slip-table td:last-child{width:17mm!important}
+  .slip-table td{font-size:6.5pt!important;padding:0.5mm 0.3mm!important}
+  .slip-table th:first-child,.slip-table td:first-child{width:8%!important}
+  .slip-table th:nth-child(2),.slip-table td:nth-child(2){width:24%!important}
+  .slip-table th:nth-child(3),.slip-table td:nth-child(3){width:24%!important}
+  .slip-table th:last-child,.slip-table td:last-child{width:44%!important}
   .right{text-align:right!important}
+  .slip-meta span:last-child{text-align:right;word-break:break-all!important;max-width:60%!important}
+  #sl-customer{word-break:break-all!important}
+  .slip-total-row span:last-child{word-break:break-all!important}
+  .slip-total-row .big{font-size:9.5pt!important;color:#000!important;word-break:break-all!important}
   .slip-total-box{padding:2mm!important;margin-top:2mm!important;border-radius:0!important}
-  .slip-total-row{font-size:8pt!important;margin-bottom:1mm!important;color:#000!important;font-weight:600!important}
-  .slip-total-row:last-child{font-size:10pt!important}
+  .slip-total-row{font-size:6.5pt!important;margin-bottom:0.5mm!important;color:#000!important;font-weight:600!important}
+  .slip-total-row:last-child{font-size:8.5pt!important}
   .slip-total-row .big{font-size:12pt!important;color:#000!important}
-  .slip-footer{font-size:7pt!important;margin-top:3mm!important}
+  .slip-footer{font-size:6pt!important;margin-top:2mm!important}
   .slip-actions{display:none!important}
   #btn-capture-wrap{display:none!important}
 }
@@ -489,6 +494,7 @@ function openSlip(data){
   document.getElementById('sl-date').textContent=data.dateDisplay||toThaiDate(data.dateVal);
   document.getElementById('sl-customer').textContent=data.name;
   document.getElementById('sl-customer').style.fontWeight='700';
+  document.getElementById('sl-customer').style.wordBreak='break-all';
   document.getElementById('sl-price').textContent=fmt(data.price)+' บาท/กก.';
   document.getElementById('sl-tare').textContent=fmt(data.tare)+' กก.';
   document.getElementById('sl-rows').innerHTML=data.weighings.map(w=>`
